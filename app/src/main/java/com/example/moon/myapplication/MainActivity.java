@@ -12,6 +12,7 @@ import butterknife.OnClick;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -35,28 +36,30 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.btn_search)
     public void onClick() {
-        //getMovie(0,10);
-
+        getMovie();
     }
 
 
-    private void getMoview(){
-        Subscriber<MovieService> subscriber = new Subscriber<MovieService>() {
+    //封装后的网络请求
+    private void getMovie(){
+        Subscriber<MovieEntity> subscriber = new Subscriber<MovieEntity>() {
             @Override
             public void onCompleted() {
-                
+                Toast.makeText(MainActivity.this,"下载成功",Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onError(Throwable e) {
-
+                Toast.makeText(MainActivity.this,"网络连接异常"+e.getMessage(),Toast.LENGTH_LONG).show();
             }
 
             @Override
-            public void onNext(MovieService movieService) {
-
+            public void onNext(MovieEntity movieEntity) {
+                tvContent.setText(movieEntity.toString());
             }
         };
+
+        HttpMethods.getInstance().getTopMovie(subscriber,0,10);
     }
 
 
